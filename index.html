@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIND·63 | لعبة تخمين الأرقام</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #0b1020;
+      color: white;
+      font-family: system-ui, sans-serif;
+    }
+    .wrap {
+      max-width: 780px;
+      margin: auto;
+    }
+    button {
+      padding: 12px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MIND·63</h1>
+    <p>اختر رقماً من 1 إلى 63.</p>
+    <div id="cards"></div>
+    <button id="reveal" disabled>اكشف الرقم</button>
+    <h2 id="result"></h2>
+  </div>
+
+  <script>
+    const values = [1, 2, 4, 8, 16, 32];
+    let answers = Array(6).fill(null);
+
+    function draw() {
+      document.getElementById("cards").innerHTML =
+        values.map((value, i) => `
+          <section>
+            <h2>البطاقة ${value}</h2>
+            <p>${Array.from(
+              {length: 63},
+              (_, n) => n + 1
+            ).filter(n => (n & value) !== 0).join("، ")}</p>
+            <button onclick="answer(${i}, true)">نعم</button>
+            <button onclick="answer(${i}, false)">لا</button>
+          </section>
+        `).join("");
+
+      document.getElementById("reveal").disabled =
+        answers.some(a => a === null);
+    }
+
+    function answer(i, yes) {
+      answers[i] = yes;
+      draw();
+    }
+
+    document.getElementById("reveal").onclick = () => {
+      const number = answers.reduce(
+        (sum, yes, i) => sum + (yes ? values[i] : 0), 0
+      );
+      document.getElementById("result").textContent =
+        "رقمك هو: " + number;
+    };
+
+    draw();
+  </script>
+</body>
+</html>
